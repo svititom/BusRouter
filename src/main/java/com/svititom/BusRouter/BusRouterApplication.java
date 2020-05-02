@@ -20,8 +20,6 @@ public class BusRouterApplication {
 
 	public static final Logger log = LoggerFactory.getLogger(BusRouterApplication.class);
 
-	@Autowired
-	private BusStopRepository busStopRepository;
 
 	@Autowired
 	private Environment env;
@@ -39,29 +37,16 @@ public class BusRouterApplication {
 	}
 
 
-
-	private void updateBusStops(RestTemplate restTemplate, String accountKey) throws JsonProcessingException {
-		int busStopCount = 0;
-		int currentlyDownloaded = 0;
-		// The Api returns 500 results, if it's less, we don't need to paginate anymore
-		do{
-			BusStops busStops = ltaConnectionService.downoadBusStops(restTemplate, accountKey, busStopCount);
-			if(busStops != null){
-				currentlyDownloaded = busStops.getBusStops().size();
-				busStopCount += currentlyDownloaded;
-				busStopRepository.saveAll(busStops.getBusStops());
-			} else {
-				break;
-			}
-		} while(currentlyDownloaded == 500);
-		System.out.println("Downloaded " + busStopCount + " bus stops");
+	public void updatedDb() throws Exception{
+		ltaConnectionService.updateBusStops();
+		ltaConnectionService.updateBusRoutes();
 	}
+
 
 	@Bean
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
 		return args -> {
-			String accountKey = env.getProperty("LTA_DATAMALL_ACCOUNT_KEY");
-			updateBusStops(restTemplate, accountKey);
+			updatedDb();
 		};
 
 	}

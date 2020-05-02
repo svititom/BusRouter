@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Pojo for deserializing BusStops from Lta Api
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BusStops {
     private String odataMetadata;

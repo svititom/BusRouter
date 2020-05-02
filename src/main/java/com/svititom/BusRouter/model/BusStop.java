@@ -4,15 +4,20 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
+
 public class BusStop {
     @Id
-    private int busStopCode;
+    @GeneratedValue
+    private Long id;
+//    @OneToMany()
+//    private List<BusRoutePoint> busRoutePoints;
+//    @Column(name = "bus_stop_code")
+    private String busStopCode;
     private String roadName;
     private String description;
     private double latitude;
@@ -20,11 +25,11 @@ public class BusStop {
 
 
 
-    public int getBusStopCode() {
+    public String getBusStopCode() {
         return busStopCode;
     }
 
-    public void setBusStopCode(int busStopCode) {
+    public void setBusStopCode(String busStopCode) {
         this.busStopCode = busStopCode;
     }
 
