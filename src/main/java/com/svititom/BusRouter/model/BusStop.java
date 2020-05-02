@@ -10,10 +10,6 @@ import javax.persistence.TableGenerator;
 
 @Entity
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
-// Magic required for SQLite
-@TableGenerator(name="sqlite", table="sqlite_sequence",
-        pkColumnName="name", valueColumnName="seq",
-        pkColumnValue="sqliteTestTable")
 public class BusStop {
     @Id
     private int busStopCode;
