@@ -1,8 +1,5 @@
 package com.svititom.BusRouter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.svititom.BusRouter.model.BusStops;
-import com.svititom.BusRouter.repository.BusStopRepository;
 import com.svititom.BusRouter.service.LtaConnectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +24,8 @@ public class BusRouterApplication {
 	@Autowired
 	LtaConnectionService ltaConnectionService;
 
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(BusRouterApplication.class, args);
 	}
@@ -41,6 +40,7 @@ public class BusRouterApplication {
 		ltaConnectionService.updateBusStops();
 		ltaConnectionService.updateBusRoutes();
 	}
+
 
 
 	@Bean

@@ -1,4 +1,4 @@
-package com.svititom.BusRouter.model;
+package com.svititom.BusRouter.model.lta;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,9 +14,7 @@ public class BusStop {
     @Id
     @GeneratedValue
     private Long id;
-//    @OneToMany()
-//    private List<BusRoutePoint> busRoutePoints;
-//    @Column(name = "bus_stop_code")
+
     private String busStopCode;
     private String roadName;
     private String description;

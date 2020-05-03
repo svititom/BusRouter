@@ -2,20 +2,16 @@ package com.svititom.BusRouter.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.svititom.BusRouter.model.BusRoutes;
-import com.svititom.BusRouter.model.BusStops;
-import com.svititom.BusRouter.repository.BusRoutePointRepository;
+import com.svititom.BusRouter.model.lta.BusRoutes;
+import com.svititom.BusRouter.model.lta.BusStops;
 import com.svititom.BusRouter.repository.BusStopRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import javax.annotation.PostConstruct;
 
 @Service
 public class LtaConnectionService {
@@ -26,8 +22,11 @@ public class LtaConnectionService {
 
     @Autowired
     private BusStopRepository busStopRepository;
+//    @Autowired
+//    private BusRoutePointRepository busRoutePointRepository;
+
     @Autowired
-    private BusRoutePointRepository busRoutePointRepository;
+    private BusRouteService busRouteService;
 
     @Autowired
     RestTemplate restTemplate;
@@ -78,7 +77,8 @@ public class LtaConnectionService {
                 busRoutePointCount += currentlyDownloaded;
                 System.out.println(busRoutes.toString());
                 System.out.println("Waiting for save:");
-                busRoutePointRepository.saveAll(busRoutes.getBusRoutePoints());
+                busRouteService.updateBusRoutes(busRoutes);
+//                busRoutePointRepository.saveAll(busRoutes.getBusRoutePoints());
 //                busRoutePointRepository.save(busRoutes.getBusRoutePoints().get(0));
             } else {
                 break;
@@ -130,6 +130,7 @@ public class LtaConnectionService {
         } while(currentlyDownloaded == 500);
         System.out.println("Downloaded " + busStopCount + " bus stops");
     }
+
 
 
 }

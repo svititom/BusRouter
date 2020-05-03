@@ -1,4 +1,4 @@
-package com.svititom.BusRouter.model;
+package com.svititom.BusRouter.model.lta;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
