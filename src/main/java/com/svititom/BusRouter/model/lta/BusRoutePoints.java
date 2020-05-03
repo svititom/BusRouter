@@ -3,17 +3,18 @@ package com.svititom.BusRouter.model.lta;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Pojo for desereilaizing Bus Routes from Lta
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BusRoutes {
+public class BusRoutePoints {
 
     private String odataMetadata;
     @JsonProperty("value")
-    private List<BusRoutePoint> busRoutePoints;
+    private List<BusRoutePoint> busRoutePoints = new LinkedList<>();
 
     @Override
     public String toString() {

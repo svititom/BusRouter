@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
@@ -15,6 +16,7 @@ public class BusStop {
     @GeneratedValue
     private Long id;
 
+    // Apparently Bus stop code can be a non integer ... Specifically there are 2 bus stops called CTE ...
     private String busStopCode;
     private String roadName;
     private String description;
@@ -61,6 +63,19 @@ public class BusStop {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BusStop busStop = (BusStop) o;
+        return busStopCode.equals(busStop.busStopCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(busStopCode);
     }
 
     @Override

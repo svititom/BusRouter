@@ -1,6 +1,6 @@
 package com.svititom.BusRouter;
 
-import com.svititom.BusRouter.service.LtaConnectionService;
+import com.svititom.BusRouter.service.BusRouteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class BusRouterApplication {
 	private Environment env;
 
 	@Autowired
-	LtaConnectionService ltaConnectionService;
+	BusRouteService busRouteService;
 
 
 
@@ -37,8 +37,11 @@ public class BusRouterApplication {
 
 
 	public void updatedDb() throws Exception{
-		ltaConnectionService.updateBusStops();
-		ltaConnectionService.updateBusRoutes();
+		busRouteService.updateBusRoutes();
+		System.out.println("Got all these bus routes: ");
+		busRouteService.getAllBusRoutes().forEach(System.out::println);
+		System.out.println("For example, route 8 in direction 1 is: ");
+		System.out.println(busRouteService.getBusRoute("8", 1).toString());
 	}
 
 

@@ -1,9 +1,11 @@
 package com.svititom.BusRouter.service;
 
 import com.svititom.BusRouter.model.BusRoute;
-import com.svititom.BusRouter.model.lta.BusRoutes;
+
+import java.util.List;
 
 public interface BusRouteService {
-    public void updateBusRoutes(BusRoutes busRoutes);
+    public void updateBusRoutes();
     public BusRoute getBusRoute(String serviceNumber, int direction);
+    public List<BusRoute> getAllBusRoutes();
 }

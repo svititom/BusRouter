@@ -2,7 +2,7 @@ package com.svititom.BusRouter.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.svititom.BusRouter.model.lta.BusRoutes;
+import com.svititom.BusRouter.model.lta.BusRoutePoints;
 import com.svititom.BusRouter.model.lta.BusStops;
 import com.svititom.BusRouter.repository.BusStopRepository;
 import org.slf4j.Logger;
@@ -22,11 +22,6 @@ public class LtaConnectionService {
 
     @Autowired
     private BusStopRepository busStopRepository;
-//    @Autowired
-//    private BusRoutePointRepository busRoutePointRepository;
-
-    @Autowired
-    private BusRouteService busRouteService;
 
     @Autowired
     RestTemplate restTemplate;
@@ -42,49 +37,49 @@ public class LtaConnectionService {
 
     public static final Logger log = LoggerFactory.getLogger(LtaConnectionService.class);
 
-    public BusRoutes downloadBusRoutes(int skipCount) throws JsonProcessingException {
+    public BusRoutePoints downloadBusRoutes(int skipCount) throws JsonProcessingException {
         String url = baseUrl + "/BusRoutes" + skipParam + skipCount;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("accept", "application/json");
         headers.set("AccountKey", accountKey);
         HttpEntity entity = new HttpEntity(headers);
-
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         if (response.getStatusCode() == HttpStatus.OK) {
             ObjectMapper mapper = new ObjectMapper();
             log.debug("Downloaded Json: " + response.getBody());
-            BusRoutes busRoutes = mapper.readValue(response.getBody(), BusRoutes.class);
-            log.info(busRoutes.toString());
-            return busRoutes;
+            BusRoutePoints busRoutePoints = mapper.readValue(response.getBody(), BusRoutePoints.class);
+            log.info(busRoutePoints.toString());
+            return busRoutePoints;
         } else {
             log.warn("Failed to download stops");
         }
         return null;
     }
 
-    public void updateBusRoutes() throws JsonProcessingException {
-//        int busRoutePointCount = 0;
+    public BusRoutePoints downloadBusRoutes() throws JsonProcessingException {
+        BusRoutePoints busRoutePoints = new BusRoutePoints();
         System.out.println("Starting download");
         int busRoutePointCount = 0;
         long currentlyDownloaded = 0;
-        // The Api returns 500 results, if it's less, we don't need to paginate anymore
+        // Download all of the data ponits
         do{
             System.out.println("Waiting for download:");
-            BusRoutes busRoutes = downloadBusRoutes(busRoutePointCount);
-            if(busRoutes != null){
-                currentlyDownloaded = busRoutes.getBusRoutePoints().size();
+            BusRoutePoints downloadBusRoutePoints = downloadBusRoutes(busRoutePointCount);
+            if(downloadBusRoutePoints != null){
+                currentlyDownloaded = downloadBusRoutePoints.getBusRoutePoints().size();
                 busRoutePointCount += currentlyDownloaded;
-                System.out.println(busRoutes.toString());
-                System.out.println("Waiting for save:");
-                busRouteService.updateBusRoutes(busRoutes);
-//                busRoutePointRepository.saveAll(busRoutes.getBusRoutePoints());
-//                busRoutePointRepository.save(busRoutes.getBusRoutePoints().get(0));
+                System.out.println(downloadBusRoutePoints.toString());
+                System.out.println("Waiting for copy:");
+                busRoutePoints.getBusRoutePoints().addAll(downloadBusRoutePoints.getBusRoutePoints());
+
             } else {
                 break;
             }
             System.out.println("Downloaded " + busRoutePointCount + " bus route points");
+            // 500 is the max number of results returned by the api, if it's less, we're at the end of pagination
         } while(currentlyDownloaded == 500);
+        return busRoutePoints;
     }
 
     private BusStops downoadBusStops(int skipCount) throws JsonProcessingException {
@@ -115,6 +110,7 @@ public class LtaConnectionService {
      * @throws JsonProcessingException
      */
     public void updateBusStops() throws JsonProcessingException {
+        busStopRepository.deleteAll();
         int busStopCount = 0;
         int currentlyDownloaded = 0;
         // The Api returns 500 results, if it's less, we don't need to paginate anymore
@@ -123,6 +119,7 @@ public class LtaConnectionService {
             if(busStops != null){
                 currentlyDownloaded = busStops.getBusStops().size();
                 busStopCount += currentlyDownloaded;
+                // todo move the persistence out from here
                 busStopRepository.saveAll(busStops.getBusStops());
             } else {
                 break;

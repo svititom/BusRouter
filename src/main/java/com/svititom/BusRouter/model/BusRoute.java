@@ -3,6 +3,7 @@ package com.svititom.BusRouter.model;
 import com.svititom.BusRouter.model.lta.BusStop;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,8 +24,24 @@ public class BusRoute{
     private String operator;
     private int direction;
 
-    @OneToMany
+    // We can afford eager, it's "just 10~40 bus stops, and we do need them
+    // Todo find if we can get these at a later time
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name="bus_stop_route",
+            joinColumns = @JoinColumn(name="id"),
+            inverseJoinColumns = @JoinColumn(name="bus_stop_code")
+    )
+
     private List<BusStop> busStops;
+
+    public BusRoute(){}
+    public BusRoute(String serviceNumber, String operator, int direction) {
+        this.serviceNumber = serviceNumber;
+        this.operator = operator;
+        this.direction = direction;
+        busStops = new ArrayList<>();
+    }
 
     public String getServiceNumber() {
         return serviceNumber;
@@ -56,5 +73,16 @@ public class BusRoute{
 
     public Long getId() {
         return Id;
+    }
+
+    @Override
+    public String toString() {
+        return "BusRoute{" +
+                "Id=" + Id +
+                ", serviceNumber='" + serviceNumber + '\'' +
+                ", operator='" + operator + '\'' +
+                ", direction=" + direction +
+                ", busStops=" + this.getBusStops() +
+                '}';
     }
 }
