@@ -3,8 +3,10 @@ package com.svititom.BusRouter.model;
 import com.svititom.BusRouter.model.lta.BusStop;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class represents a single route in a single direction
@@ -15,14 +17,17 @@ import java.util.List;
  * For now we disregard bus stop first and last bus
  */
 @Entity
-public class BusRoute{
+public class BusRoute {
+    /*
+    We use a composite key of serviceNumber and direction,
+    since a service can have multiple directions
+    */
     @Id
-    @GeneratedValue
-    private Long Id;
+    private Integer id;
 
     private String serviceNumber;
-    private String operator;
     private int direction;
+    private String operator;
 
     // We can afford eager, it's "just 10~40 bus stops, and we do need them
     // Todo find if we can get these at a later time
@@ -32,7 +37,6 @@ public class BusRoute{
             joinColumns = @JoinColumn(name="id"),
             inverseJoinColumns = @JoinColumn(name="bus_stop_code")
     )
-
     private List<BusStop> busStops;
 
     public BusRoute(){}
@@ -41,48 +45,54 @@ public class BusRoute{
         this.operator = operator;
         this.direction = direction;
         busStops = new ArrayList<>();
+        createId();
+    }
+
+    // This is a crutch until we find a more elegant way for jpa to compare objects
+    public void createId(){
+        this.id = hashCode();
     }
 
     public String getServiceNumber() {
         return serviceNumber;
     }
 
-    public void setServiceNumber(String serviceNumber) {
-        this.serviceNumber = serviceNumber;
-    }
 
     public String getOperator() {
         return operator;
     }
 
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
 
     public int getDirection() {
         return direction;
     }
 
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
 
     public List<BusStop> getBusStops() {
         return busStops;
     }
 
-    public Long getId() {
-        return Id;
-    }
-
     @Override
     public String toString() {
         return "BusRoute{" +
-                "Id=" + Id +
-                ", serviceNumber='" + serviceNumber + '\'' +
-                ", operator='" + operator + '\'' +
+                "serviceNumber='" + serviceNumber + '\'' +
                 ", direction=" + direction +
-                ", busStops=" + this.getBusStops() +
+                ", operator='" + operator + '\'' +
+                ", busStops=" + busStops +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BusRoute busRoute = (BusRoute) o;
+        return getDirection() == busRoute.getDirection() &&
+                getServiceNumber().equals(busRoute.getServiceNumber());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getServiceNumber(), getDirection());
     }
 }

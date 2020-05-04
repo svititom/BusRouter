@@ -43,7 +43,17 @@ public class BusRouteServiceImpl implements BusRouteService {
             Map<Integer, BusRoute> busServiceMap = busRouteMap.computeIfAbsent(busRoutePoint.getServiceNumber(), s -> new HashMap<>());
             BusRoute busRoute = busServiceMap.computeIfAbsent(busRoutePoint.getDirection()
                     , direction -> new BusRoute(busRoutePoint.getServiceNumber(), busRoutePoint.getOperator(), busRoutePoint.getDirection()));
-            BusStop busStop = busStopRepository.findBusStopByBusStopCode(busRoutePoint.getBusStopCode());
+
+            int busStopCode;
+            try {
+                busStopCode = Integer.parseInt(busRoutePoint.getBusStopCode());
+            } catch (Exception e){
+                // Unfortunately the API returns 2 BusRoutePoints with bus stop code = "CTE" every other one is 5 digit number
+                // Since there is no mapping for this bus stop, we can just throw it away
+                log.warn("Failed to parse bus stop code for: " + busRoutePoint.toString() + "\n", e);
+                break;
+            }
+            BusStop busStop = busStopRepository.findBusStopByBusStopCode(busStopCode);
             if (busStop == null) {
                 log.error("Could not find bus stop with code: " + busRoutePoint.getBusStopCode() + " for " + busRoutePoint.toString());
             }

@@ -110,7 +110,6 @@ public class LtaConnectionService {
      * @throws JsonProcessingException
      */
     public void updateBusStops() throws JsonProcessingException {
-        busStopRepository.deleteAll();
         int busStopCount = 0;
         int currentlyDownloaded = 0;
         // The Api returns 500 results, if it's less, we don't need to paginate anymore

@@ -5,5 +5,5 @@ import com.svititom.BusRouter.model.lta.BusStop;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BusStopRepository extends JpaRepository<BusStop, Integer> {
-    public BusStop findBusStopByBusStopCode(String busStopCode);
+    public BusStop findBusStopByBusStopCode(int busStopCode);
 }
