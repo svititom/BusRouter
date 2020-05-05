@@ -31,7 +31,7 @@ public class BusRoute {
 
     // We can afford eager, it's "just 10~40 bus stops, and we do need them
     // Todo find if we can get these at a later time
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="bus_stop_route",
             joinColumns = @JoinColumn(name="id"),
@@ -78,7 +78,15 @@ public class BusRoute {
                 "serviceNumber='" + serviceNumber + '\'' +
                 ", direction=" + direction +
                 ", operator='" + operator + '\'' +
-                ", busStops=" + busStops +
+                '}';
+    }
+
+    public String toStringWithBusStops(){
+        return "BusRoute{" +
+                "serviceNumber='" + serviceNumber + '\'' +
+                ", direction=" + direction +
+                ", operator='" + operator + '\'' +
+                ", busStops='" + busStops + '\'' +
                 '}';
     }
 

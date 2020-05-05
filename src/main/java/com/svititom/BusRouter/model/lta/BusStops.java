@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.svititom.BusRouter.model.lta.BusStop;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
 public class BusStops {
     private String odataMetadata;
     @JsonProperty("value")
-    private List<BusStop> busStops;
+    private List<BusStop> busStops = new LinkedList<>();
 
     public String getOdataMetadata() {
         return odataMetadata;

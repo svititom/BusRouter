@@ -2,6 +2,7 @@ package com.svititom.BusRouter.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.svititom.BusRouter.model.lta.BusRoutePoint;
 import com.svititom.BusRouter.model.lta.BusRoutePoints;
 import com.svititom.BusRouter.model.lta.BusStops;
 import com.svititom.BusRouter.repository.BusStopRepository;
@@ -20,8 +21,6 @@ public class LtaConnectionService {
     public static final String baseUrl = "http://datamall2.mytransport.sg/ltaodataservice";
     public static final String skipParam = "?$skip=";
 
-    @Autowired
-    private BusStopRepository busStopRepository;
 
     @Autowired
     RestTemplate restTemplate;
@@ -64,13 +63,10 @@ public class LtaConnectionService {
         long currentlyDownloaded = 0;
         // Download all of the data ponits
         do{
-            System.out.println("Waiting for download:");
             BusRoutePoints downloadBusRoutePoints = downloadBusRoutes(busRoutePointCount);
             if(downloadBusRoutePoints != null){
                 currentlyDownloaded = downloadBusRoutePoints.getBusRoutePoints().size();
                 busRoutePointCount += currentlyDownloaded;
-                System.out.println(downloadBusRoutePoints.toString());
-                System.out.println("Waiting for copy:");
                 busRoutePoints.getBusRoutePoints().addAll(downloadBusRoutePoints.getBusRoutePoints());
 
             } else {
@@ -109,22 +105,24 @@ public class LtaConnectionService {
      * Download and Update the bus stops in db
      * @throws JsonProcessingException
      */
-    public void updateBusStops() throws JsonProcessingException {
+    public BusStops downloadBusStops() throws JsonProcessingException {
         int busStopCount = 0;
         int currentlyDownloaded = 0;
+        BusStops busStops = new BusStops();
+
         // The Api returns 500 results, if it's less, we don't need to paginate anymore
         do{
-            BusStops busStops = downoadBusStops(busStopCount);
+            BusStops downloadedBusStops = downoadBusStops(busStopCount);
             if(busStops != null){
-                currentlyDownloaded = busStops.getBusStops().size();
+                currentlyDownloaded = downloadedBusStops.getBusStops().size();
                 busStopCount += currentlyDownloaded;
-                // todo move the persistence out from here
-                busStopRepository.saveAll(busStops.getBusStops());
+                busStops.getBusStops().addAll(downloadedBusStops.getBusStops());
             } else {
                 break;
             }
         } while(currentlyDownloaded == 500);
         System.out.println("Downloaded " + busStopCount + " bus stops");
+        return busStops;
     }
 
 
