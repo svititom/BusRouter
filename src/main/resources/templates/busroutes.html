@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bus Routes</title>
+</head>
+<body>
+<h1>Let's explore some Bus Routes!</h1>
+
+<div id="select_bus_route" >
+    <p>Bus Route:
+        <select>
+        <option th:each="busRoute : ${busRoutes}" th:if="${busRoute.direction == 1}" th:value="${busRoute.serviceNumber}"
+                th:text="${busRoute.serviceNumber}"></option>
+        </select>
+    </p>
+    <p>Direction:
+        <select>
+            <option>1</option>
+            <option>2</option>
+        </select>
+    </p>
+</div>
+
+</body>
+</html>

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.thymeleaf.Thymeleaf;
 
 @SpringBootApplication
 public class BusRouterApplication {
@@ -43,8 +44,8 @@ public class BusRouterApplication {
 		busRouteService.updateBusRoutes();
 
 		BusRoute routeEight = busRouteService.getBusRoute("8", 1);
-		System.out.println("Route 8 has " + routeEight.getBusStops().size() + " bus stops");
-		System.out.println("It is: " + routeEight.toString());
+//		System.out.println("Route 8 has " + routeEight.getBusStops().size() + " bus stops");
+//		System.out.println("It is: " + routeEight.toString());
 	}
 
 
